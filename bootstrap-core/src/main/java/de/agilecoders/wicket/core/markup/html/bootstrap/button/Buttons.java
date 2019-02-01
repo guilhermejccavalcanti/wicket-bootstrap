@@ -26,19 +26,20 @@ public final class Buttons {
      */
     @Deprecated
     public static void fixDisabledState(Component component, ComponentTag tag) {
-        if (!component.isEnabled()) {
+        if (!component.isEnabledInHierarchy()) {
             if (component instanceof AbstractLink) {
                 tag.setName("a");
-            } else if (component instanceof Button) {
-                tag.setName("button");
             } else {
-                if (tag.getAttribute("value") != null) {
-                    tag.setName("input");
-                } else {
+                if (component instanceof Button) {
                     tag.setName("button");
+                } else {
+                    if (tag.getAttribute("value") != null) {
+                        tag.setName("input");
+                    } else {
+                        tag.setName("button");
+                    }
                 }
             }
-
             tag.put("disabled", "disabled");
         }
     }
@@ -47,18 +48,12 @@ public final class Buttons {
      * defines all possible sizes of a button element.
      */
     public enum Size implements ICssClassNameProvider {
-        Mini("btn-xs"),
-        Small("btn-sm"),
-        Medium(""), // default button size doesn't need any css class
-        Large("btn-lg");
+
+        Mini("btn-xs"), Small("btn-sm"), // default button size doesn't need any css class
+        Medium(""), Large("btn-lg");
 
         private final String cssClassName;
 
-        /**
-         * Construct.
-         *
-         * @param cssClassName the css class name of this size
-         */
         Size(String cssClassName) {
             this.cssClassName = cssClassName;
         }
@@ -67,15 +62,14 @@ public final class Buttons {
         public String cssClassName() {
             return cssClassName;
         }
-
     }
 
     /**
      * Make a set of buttons appear vertically or horizontally stacked.
      */
     public enum Orientation implements ICssClassNameProvider {
-        Horizontal,
-        Vertical;
+
+        Horizontal(), Vertical();
 
         @Override
         public String cssClassName() {
@@ -88,22 +82,19 @@ public final class Buttons {
      * @see <a href="http://getbootstrap.com/css/#buttons">Buttons</a>
      */
     public enum Type implements ICssClassNameProvider {
-        Default("btn-default"), // Standard gray button with gradient
-        Menu(""), // Menu button which has no default css class name
-        Primary("btn-primary"), // Provides extra visual weight and identifies the primary action in a set of buttons
-        Info("btn-info"), // Used as an alternate to the default styles
-        Success("btn-success"), // Indicates a successful or positive action
-        Warning("btn-warning"), // Indicates caution should be taken with this action
-        Danger("btn-danger"), // Indicates a dangerous or potentially negative action
-        Link("btn-link"); // Deemphasize a button by making it look like a link while maintaining button behavior
+
+        // Standard gray button with gradient
+        Default("btn-default"), // Menu button which has no default css class name
+        Menu(""), // Provides extra visual weight and identifies the primary action in a set of buttons
+        Primary("btn-primary"), // Used as an alternate to the default styles
+        Info("btn-info"), // Indicates a successful or positive action
+        Success("btn-success"), // Indicates caution should be taken with this action
+        Warning("btn-warning"), // Indicates a dangerous or potentially negative action
+        Danger("btn-danger"), // Deemphasize a button by making it look like a link while maintaining button behavior
+        Link("btn-link");
 
         private final String cssClassName;
 
-        /**
-         * Construct.
-         *
-         * @param cssClassName the css class name of button type
-         */
         Type(String cssClassName) {
             this.cssClassName = cssClassName;
         }
@@ -115,7 +106,6 @@ public final class Buttons {
         public String cssClassName() {
             return cssClassName;
         }
-
     }
 
     /**
@@ -127,20 +117,13 @@ public final class Buttons {
      */
     public static void onComponentTag(final Component component, final ComponentTag tag, final ICssClassNameProvider... classNameProviders) {
         Args.notNull(classNameProviders, "classNameProviders");
-
-        final CssClassNames.Builder builder = CssClassNames.newBuilder().add(
-                "btn", (component.isEnabled() ? "" : "btn-disabled"));
-
+        final CssClassNames.Builder builder = CssClassNames.newBuilder().add("btn", (component.isEnabled() ? "" : "btn-disabled"));
         for (final ICssClassNameProvider provider : classNameProviders) {
             builder.add(provider.cssClassName());
         }
-
         Attributes.addClass(tag, builder.asString());
     }
 
-    /**
-     * private constructor to prevent instantiation
-     */
     private Buttons() {
         throw new UnsupportedOperationException();
     }

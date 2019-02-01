@@ -1,9 +1,7 @@
 package de.agilecoders.wicket.extensions.markup.html.bootstrap.form.select;
 
 import de.agilecoders.wicket.jquery.AbstractConfig;
-
 import de.agilecoders.wicket.jquery.IKey;
-
 import java.util.Arrays;
 
 /**
@@ -15,19 +13,26 @@ import java.util.Arrays;
 public class BootstrapSelectConfig extends AbstractConfig {
 
     private static final IKey<Boolean> LiveSearch = newKey("liveSearch", false);
+
     private static final IKey<Boolean> Multiple = newKey("multiple", false);
+
     private static final IKey<Integer> MaxOptions = newKey("maxOptions", null);
-    private static final IKey<Object[]> MaxOptionsText = newKey("maxOptionsText", new Object[] {
-            "Limit reached ({n} {var} max)",
-            "Group limit reached ({n} {var} max)",
-            new Object[] { "items", "item" }
-    });
+
+    private static final IKey<Object[]> MaxOptionsText = newKey("maxOptionsText", new Object[] { "Limit reached ({n} {var} max)", "Group limit reached ({n} {var} max)", new Object[] { "items", "item" } });
 
     private static final IKey<String> SelectedTitle = newKey("selectedTitle", null);
 
     private static final IKey<String> NoneSelectedText = newKey("noneSelectedText", null);
+
     private static final IKey<String> NoneResultsText = newKey("noneResultsText", null);
+
     private static final IKey<String> CountSelectedText = newKey("countSelectedText", null);
+
+    private static final IKey<Boolean> ActionsBox = newKey("actionsBox", false);
+
+    private static final IKey<String> SelectAllText = newKey("selectAllText", null);
+
+    private static final IKey<String> DeselectAllText = newKey("deselectAllText", null);
 
     private static final long serialVersionUID = -1083532309683379273L;
 
@@ -44,7 +49,6 @@ public class BootstrapSelectConfig extends AbstractConfig {
      * @param multiple is multiple
      * @return current instance
      */
-
     public BootstrapSelectConfig withMultiple(Boolean multiple) {
         put(Multiple, multiple);
         return this;
@@ -66,8 +70,7 @@ public class BootstrapSelectConfig extends AbstractConfig {
      * @param multiItem items title
      * @return current instance
      */
-    public BootstrapSelectConfig withMaxOptionsText(String maxOptionsText, String groupText, String singleItem,
-            String multiItem) {
+    public BootstrapSelectConfig withMaxOptionsText(String maxOptionsText, String groupText, String singleItem, String multiItem) {
         Object[] clone = get(MaxOptionsText).clone();
         clone[0] = maxOptionsText;
         clone[1] = groupText;
@@ -112,6 +115,46 @@ public class BootstrapSelectConfig extends AbstractConfig {
      */
     public BootstrapSelectConfig withCountSelectedText(String text) {
         put(CountSelectedText, text);
+        return this;
+    }
+
+    /**
+     * Shows or hides actions box with select all / deselect all buttons. 
+     * Applicable only for {@link BootstrapMultiSelect}.
+     * 
+     * @param actionsBox is Actions box
+     * @return current instance
+     */
+    public BootstrapSelectConfig withActionsBox(Boolean actionsBox) {
+        put(ActionsBox, actionsBox);
+        return this;
+    }
+
+    /**
+     * Sets text for select all button in case actions box is turned on. 
+     * Applicable only for {@link BootstrapMultiSelect}.
+     * 
+     * @see BootstrapSelectConfig#withActionsBox(Boolean)
+     * 
+     * @param actionsBox is Actions box
+     * @return current instance
+     */
+    public BootstrapSelectConfig withSelectAllText(String selectAllText) {
+        put(SelectAllText, selectAllText);
+        return this;
+    }
+
+    /**
+     * Sets text for deselect all button in case actions box is turned on. 
+     * Applicable only for {@link BootstrapMultiSelect}.
+     * 
+     * @see BootstrapSelectConfig#withActionsBox(Boolean)
+     * 
+     * @param actionsBox is Actions box
+     * @return current instance
+     */
+    public BootstrapSelectConfig withDeselectAllText(String deselectAllText) {
+        put(DeselectAllText, deselectAllText);
         return this;
     }
 
@@ -162,6 +205,27 @@ public class BootstrapSelectConfig extends AbstractConfig {
      */
     public String getCountSelectedText() {
         return get(CountSelectedText);
+    }
+
+    /**
+     * @return actions box
+     */
+    public boolean getActionsBox() {
+        return get(ActionsBox);
+    }
+
+    /**
+     * @return select all text
+     */
+    public String getSelectAllText() {
+        return get(SelectAllText);
+    }
+
+    /**
+     * @return select all text
+     */
+    public String getDeselectAllText() {
+        return get(DeselectAllText);
     }
 
     /**

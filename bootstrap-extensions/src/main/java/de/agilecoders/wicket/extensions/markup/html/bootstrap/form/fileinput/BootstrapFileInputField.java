@@ -1,11 +1,9 @@
 package de.agilecoders.wicket.extensions.markup.html.bootstrap.form.fileinput;
 
 import static de.agilecoders.wicket.jquery.JQuery.$;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -16,7 +14,6 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.lang.Args;
 import org.apache.wicket.util.template.PackageTextTemplate;
-
 import de.agilecoders.wicket.jquery.JQuery;
 import de.agilecoders.wicket.jquery.util.Strings2;
 
@@ -52,35 +49,16 @@ public class BootstrapFileInputField extends FileUploadField {
 
     private final FileInputConfig config;
 
-    /**
-     * Constructor
-     *
-     * @param id The component id
-     */
     public BootstrapFileInputField(String id) {
         this(id, null);
     }
 
-    /**
-     * Constructor
-     *
-     * @param id The component id
-     * @param model The model that will store the uploaded files
-     */
     public BootstrapFileInputField(final String id, final IModel<List<FileUpload>> model) {
         this(id, model, new FileInputConfig());
     }
 
-    /**
-     * Constructor
-     *
-     * @param id The component id
-     * @param model The model that will store the uploaded files
-     * @param config The configuration for this file input
-     */
     public BootstrapFileInputField(final String id, final IModel<List<FileUpload>> model, FileInputConfig config) {
         super(id, model);
-
         this.config = Args.notNull(config, "config");
         if (!config.uploadClass().contains(JQUERY_IDENTIFIER_UPLOAD_BUTTON_CLASS)) {
             String uploadClass = config.uploadClass() + " " + JQUERY_IDENTIFIER_UPLOAD_BUTTON_CLASS;
@@ -88,7 +66,7 @@ public class BootstrapFileInputField extends FileUploadField {
         }
     }
 
-    public FileInputConfig getConfig(){
+    public FileInputConfig getConfig() {
         return config;
     }
 
@@ -99,14 +77,15 @@ public class BootstrapFileInputField extends FileUploadField {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-
         if (ajaxUploadBehavior == null && getConfig().showUpload()) {
             String ajaxEventName = Strings2.getMarkupId(this) + AJAX_EVENT_NAME_SUFFIX;
             ajaxUploadBehavior = newAjaxFormSubmitBehavior(ajaxEventName);
             add(ajaxUploadBehavior);
-        } else if (ajaxUploadBehavior != null && !getConfig().showUpload()) {
-            remove(ajaxUploadBehavior);
-            ajaxUploadBehavior = null;
+        } else {
+            if (ajaxUploadBehavior != null && !getConfig().showUpload()) {
+                remove(ajaxUploadBehavior);
+                ajaxUploadBehavior = null;
+            }
         }
     }
 
@@ -119,14 +98,22 @@ public class BootstrapFileInputField extends FileUploadField {
      */
     protected AjaxFormSubmitBehavior newAjaxFormSubmitBehavior(String event) {
         return new AjaxFormSubmitBehavior(form, event) {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 target.add(getForm());
                 BootstrapFileInputField.this.onSubmit(target);
             }
+
+            @Override
+            protected void onAfterSubmit(AjaxRequestTarget target) {
+                super.onAfterSubmit(target);
+                BootstrapFileInputField.this.onAfterSubmit(target);
+            }
+
             @Override
             protected void onError(AjaxRequestTarget target) {
-            	BootstrapFileInputField.this.onError(target);
+                BootstrapFileInputField.this.onError(target);
             }
         };
     }
@@ -149,15 +136,22 @@ public class BootstrapFileInputField extends FileUploadField {
     protected void onSubmit(AjaxRequestTarget target) {
     }
 
+    /**
+	 * A callback method that is called after successful file upload triggered
+	 * by the usage of the <em>Upload</em> button.
+	 * 
+	 * @param target the {@link AjaxRequestTarget}
+	 */
+    protected void onAfterSubmit(AjaxRequestTarget target) {
+    }
+
     @Override
     public void renderHead(final IHeaderResponse response) {
         FileinputJsReference.INSTANCE.renderHead(response);
-        
-        if(config.language() != null)
-        	new FileinputLocaleJsReference(config.language()).renderHead(response);
-
+        if (config.language() != null) {
+            new FileinputLocaleJsReference(config.language()).renderHead(response);
+        }
         JQuery fileinputJS = $(this).chain("fileinput", config);
-
         String ajaxUpload = "";
         if (ajaxUploadBehavior != null) {
             PackageTextTemplate tmpl = new PackageTextTemplate(BootstrapFileInputField.class, "res/fileinput.tmpl.js");
@@ -167,10 +161,8 @@ public class BootstrapFileInputField extends FileUploadField {
                 variables.put(label, getString(label));
             }
             variables.put("eventName", ajaxUploadBehavior.getEvent());
-
             ajaxUpload = tmpl.asString(variables);
         }
-
         response.render(OnDomReadyHeaderItem.forScript(fileinputJS.get() + ajaxUpload));
     }
 }

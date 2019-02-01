@@ -53,42 +53,24 @@ import org.apache.wicket.model.Model;
 public abstract class BootstrapLink<T> extends Link<T> implements IBootstrapButton<BootstrapLink<T>> {
 
     private final Icon icon;
+
     private final Component label;
+
     private final Component splitter;
+
     private final ButtonBehavior buttonBehavior;
 
-    /**
-     * Construct.
-     *
-     * @param id    the components id
-     * @param model mandatory parameter
-     */
     public BootstrapLink(final String id, final IModel<T> model) {
         this(id, model, Buttons.Type.Link);
     }
 
-    /**
-     * Construct.
-     *
-     * @param id   the components id
-     * @param type the type of the button
-     */
     public BootstrapLink(final String id, final Buttons.Type type) {
         this(id, null, type);
     }
 
-    /**
-     * Construct.
-     *
-     * @param id    The component id
-     * @param model mandatory parameter
-     * @param type  the type of the button
-     */
     public BootstrapLink(final String id, final IModel<T> model, final Buttons.Type type) {
         super(id, model);
-
         add(buttonBehavior = new ButtonBehavior(type, Buttons.Size.Medium));
-
         add(icon = newIcon("icon"));
         add(splitter = newSplitter("splitter"));
         add(label = newLabel("label"));
@@ -111,8 +93,7 @@ public abstract class BootstrapLink<T> extends Link<T> implements IBootstrapButt
      * @return new label component
      */
     protected Component newLabel(final String markupId) {
-        return new Label(markupId, new Model<>(""))
-                .setRenderBodyOnly(true);
+        return new Label(markupId, new Model<>("")).setRenderBodyOnly(true);
     }
 
     /**
@@ -123,9 +104,7 @@ public abstract class BootstrapLink<T> extends Link<T> implements IBootstrapButt
      * @return new splitter component
      */
     protected Component newSplitter(final String markupId) {
-        return new WebMarkupContainer(markupId)
-                .setRenderBodyOnly(true)
-                .setEscapeModelStrings(false);
+        return new WebMarkupContainer(markupId).setRenderBodyOnly(true).setEscapeModelStrings(false);
     }
 
     /**
@@ -139,7 +118,6 @@ public abstract class BootstrapLink<T> extends Link<T> implements IBootstrapButt
     @Override
     protected void onConfigure() {
         super.onConfigure();
-
         splitter.setVisible(icon.hasIconType() && StringUtils.isNotEmpty(label.getDefaultModelObjectAsString()));
     }
 
@@ -184,6 +162,17 @@ public abstract class BootstrapLink<T> extends Link<T> implements IBootstrapButt
      */
     public BootstrapLink<T> setType(Buttons.Type type) {
         this.buttonBehavior.setType(type);
+        return this;
+    }
+
+    /**
+     * Sets whether this button should display inline or block
+     *
+     * @param block <code>true</code>, for block mode
+     * @return this instance for chaining
+     */
+    public BootstrapLink<T> setBlock(boolean block) {
+        this.buttonBehavior.setBlock(block);
         return this;
     }
 }
